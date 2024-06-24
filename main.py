@@ -8,7 +8,7 @@ from selenium.webdriver.common.keys import Keys
 import time
 from datetime import datetime
 
-from xpaths import ALLOW_COOKIES_XPATH, DESTINATION
+from xpaths import ALLOW_COOKIES_XPATH
 
 driver = webdriver.Firefox(service=FirefoxService(GeckoDriverManager().install()))
 driver.get("https://vola.ro/")
@@ -21,7 +21,7 @@ def allow_cookies(driver):
             EC.element_to_be_clickable((By.XPATH, ALLOW_COOKIES_XPATH))
         )
         allow_cookies_element.click()
-        print("🙂 Button clicked")
+        print("🙂 Button clicked, cookies allowed 🍪.")
         return True
     except Exception as e:
         print(f"No button found. Details: {e}")
@@ -40,7 +40,7 @@ def navigate(driver):
     base_url = (
         "https://www.vola.ro/flight_search/from_code/{}/to_code/{}/dd/{}/rd/{}/ad/1"
     )
-    from_airport = input("Enter departure airport code: ").upper()
+    from_airport = input("Enter the 3-letter airport code you're flying from, ex BUH: ").upper()
     while len(from_airport) != 3 or not from_airport.isalpha():
         print("Invalid format. Please try again.")
         from_airport = input("Enter departure airport code: ").upper()
@@ -65,3 +65,4 @@ def navigate(driver):
 if __name__ == "__main__":
     allow_cookies(driver)
     navigate(driver)
+    print("🚀 Program finished, please check your browser.")
