@@ -1,4 +1,5 @@
-zfrom selenium import webdriver
+import sqlite3
+from selenium import webdriver
 from selenium.webdriver.firefox.service import Service as FirefoxService
 from webdriver_manager.firefox import GeckoDriverManager
 from selenium.webdriver.support import expected_conditions as EC
@@ -8,7 +9,7 @@ from selenium.webdriver.common.keys import Keys
 import time
 from datetime import datetime
 
-from xpaths import ALLOW_COOKIES_XPATH
+from xpaths import ALLOW_COOKIES_XPATH, YEAR
 
 driver = webdriver.Firefox(service=FirefoxService(GeckoDriverManager().install()))
 driver.get("https://vola.ro/")
@@ -48,21 +49,75 @@ def navigate(driver):
     while len(to_airport) != 3 or not to_airport.isalpha():
         print("Invalid format. Please try again.")
         to_airport = input("Enter arrival airport code: ").upper()
-    departure_date = input("Enter departure date (YYYY-MM-DD): ")
-    while not validate_date(departure_date):
+    
+    # Adjusted to use YEAR constant for departure date
+    departure_month_day = input("Enter departure month and day (MM-DD): ")
+    while not validate_date(f"{YEAR}-{departure_month_day}"):
         print("Invalid format. Please try again.")
-        departure_date = input("Enter departure date (YYYY-MM-DD): ")
-    return_date = input("Enter return date (YYYY-MM-DD): ")
-    while not validate_date(return_date):
+        departure_month_day = input("Enter departure month and day (MM-DD): ")
+    departure_date = f"{YEAR}-{departure_month_day}"
+    
+    # Adjusted to use YEAR constant for return date
+    return_month_day = input("Enter return month and day (MM-DD): ")
+    while not validate_date(f"{YEAR}-{return_month_day}"):
         print("Invalid format. Please try again.")
-        return_date = input("Enter return date (YYYY-MM-DD): ")
+        return_month_day = input("Enter return month and day (MM-DD): ")
+    return_date = f"{YEAR}-{return_month_day}"
+    
     url_to_manipulate = base_url.format(
         from_airport, to_airport, departure_date, return_date
     )
     driver.get(url_to_manipulate)
 
+# def create_db():
+#     conn = sqlite3.connect("flights.db")
+#     c = conn.cursor()
+#     c.execute('''
+#         CREATE TABLE IF NOT EXISTS searches (
+#             id INTEGER PRIMARY KEY,
+#             from_airport TEXT NOT NULL,
+#             to_airport TEXT NOT NULL,
+#             departure_date TEXT NOT NULL,
+#             return_date TEXT NOT NULL,
+#             price TEXT,
+#             departure_hour TEXT,
+#             return_hour TEXT,
+#         )
+#     '''
+#     )
+#     conn.commit()
+#     conn.close()
+
+def get_flight_data(driver):
+    # get the price
+    price_xpath = "/html/body/div[1]/div[3]/div/div/div[2]/ith-tab-filters/div/ith-tab-filter[1]/div/strong[1]/span"
+    price_element = WebDriverWait(driver, 10).until(
+        EC.presence_of_element_located((By.XPATH, price_xpath))
+    )
+    price = price_element.text
+    print(f"Price: {price} RON 💸")
+
+    # get the departure hour
+    departure_xpath = "/html/body/div[1]/div[3]/div/div/div[2]/ith-flight-offers/div/div[1]/div/div/ith-flight-offer/div/div/div[1]/ith-flight-stage[1]/div/div[2]/div/div[1]/div[1]/div[1]/span"
+    departure_element = WebDriverWait(driver, 10).until(
+        EC.presence_of_element_located((By.XPATH, departure_xpath))
+    )
+    departure_hour = departure_element.text
+    print(f"Departure hour: {departure_hour}")
+
+    # get the departure company
+    return_hour_xpath = "/html/body/div[1]/div[3]/div/div/div[2]/ith-flight-offers/div/div[1]/div/div/ith-flight-offer/div/div/div[1]/ith-flight-stage[2]/div/div[2]/div/div[1]/div[1]/div[1]/span"
+    return_hour_element = WebDriverWait(driver, 10).until(
+        EC.presence_of_element_located((By.XPATH, return_hour_xpath))
+    )
+    return_hour = return_hour_element.text
+    print(f"Return hour: {return_hour}")
+
+
+
 
 if __name__ == "__main__":
     allow_cookies(driver)
     navigate(driver)
+    get_flight_data(driver)
     print("🚀 Program finished, please check your browser.")
