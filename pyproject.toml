@@ -9,6 +9,7 @@ readme = "README.md"
 python = "^3.11"
 selenium = "^4.22.0"
 webdriver-manager = "^4.0.1"
+sqlite3 = ""
 
 [build-system]
 requires = ["poetry-core"]
