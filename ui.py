@@ -40,8 +40,8 @@ def custom_input_dialog(title, prompt, initialvalue="", options=None):
         dialog.destroy()
 
     tk.Button(dialog, text="OK", command=on_ok, font=large_font).pack(pady=20)
-    dialog.bind("<Return>", on_ok) # Bind Enter key to the on_ok function
-    dialog.bind("<KP_Enter>", on_ok) # Bind NumPad Enter key to the on_ok function 
+    dialog.bind("<Return>", on_ok)  # Bind Enter key to the on_ok function
+    dialog.bind("<KP_Enter>", on_ok)  # Bind NumPad Enter key to the on_ok function
     if options:
         combo.focus_set()  # Set focus to the combo widget
     else:
@@ -127,7 +127,7 @@ def get_user_input():
         break
 
     departure_date = f"{YEAR}-{departure_month_day.replace('.', '-').replace(' ', '-').replace('/', '-')}"
-    return_date = f"{YEAR}-{return_month_day.replace('.', '-')}"
+    return_date = f"{YEAR}-{return_month_day.replace('.', '-').replace(' ', '-').replace('/', '-')}"
 
     return from_airport, to_airport, departure_date, return_date
 
@@ -184,4 +184,3 @@ def exit_callback(root):
     root.quit()
     root.destroy()
     exit()  # Ensure the entire program stops
-
