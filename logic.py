@@ -73,6 +73,7 @@ def get_flight_data(driver):
 
 def exit_callback(root):
     print("👋 Goodbye! 👋")
+    driver.quit()
     root.quit()
     root.destroy()
     exit()  # Ensure the entire program stops
