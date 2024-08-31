@@ -53,7 +53,7 @@ def get_flight_data(driver):
     time.sleep(10)  # make sure the best price is loaded
     price = price_element.text
     price = re.sub(r'[^\d.]', '', price)  # Remove non-numeric characters
-    print(f"Price: {price} EUR 💸")
+    print(f"Price: {price} EUR 💸\n")
 
     # get the departure hour
     departure_xpath = "/html/body/div[1]/div[3]/div/div/div[2]/ith-flight-offers/div/div[1]/div/div/ith-flight-offer/div/div/div[1]/ith-flight-stage[1]/div/div[2]/div/div[1]/div[1]/div[1]/span"
@@ -97,6 +97,7 @@ def run_logic():
             navigate(driver, from_airport, to_airport, departure_date, return_date)
             price, departure_hour, return_hour = get_flight_data(driver)
             price = float(price.replace(',', ''))  # Convert price to float for comparison
+
             if price < best_price:
                 best_price = price
                 best_period = (departure_date, return_date)

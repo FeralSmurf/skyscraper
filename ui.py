@@ -129,18 +129,21 @@ def generate_date_ranges(start_date, holiday_duration):
         departure_date = start_date + timedelta(days=i)
         return_date = departure_date + timedelta(days=holiday_duration)
         date_ranges.append((departure_date.strftime("%Y-%m-%d"), return_date.strftime("%Y-%m-%d")))
-    print(f"Date ranges:{date_ranges}")
+    print("Date ranges:")
+    for index, date_range in enumerate(date_ranges, start=1):
+        print(f"{index}. {date_range}")
+    print()  # Add an extra newline for better readability
     return date_ranges
 
 
 def display_results(
     from_airport,
     to_airport,
-    departure_dates,
-    return_dates,
-    prices,
-    departure_hours,
-    return_hours,
+    departure_date,
+    return_date,
+    price,
+    departure_hour,
+    return_hour,
     run_again_callback,
     exit_callback,
 ):
@@ -164,12 +167,11 @@ def display_results(
         font=large_font,
     ).pack(pady=20)
 
-    for departure_date, departure_hour, return_date, return_hour, price in zip(departure_dates, departure_hours, return_dates, return_hours, prices):
-        tk.Label(root, text=f"Departure Date: {departure_date}", font=large_font).pack(pady=10)
-        tk.Label(root, text=f"Departure Hour: {departure_hour}", font=large_font).pack(pady=10)
-        tk.Label(root, text=f"Return Date: {return_date}", font=large_font).pack(pady=10)
-        tk.Label(root, text=f"Return Hour: {return_hour}", font=large_font).pack(pady=10)
-        tk.Label(root, text=f"Price: {price} EUR", font=large_font).pack(pady=10)
+    tk.Label(root, text=f"Departure Date: {departure_date}", font=large_font).pack(pady=10)
+    tk.Label(root, text=f"Departure Hour: {departure_hour}", font=large_font).pack(pady=10)
+    tk.Label(root, text=f"Return Date: {return_date}", font=large_font).pack(pady=10)
+    tk.Label(root, text=f"Return Hour: {return_hour}", font=large_font).pack(pady=10)
+    tk.Label(root, text=f"Price: {price} EUR", font=large_font).pack(pady=10)
 
     tk.Button(root, text="Run Again", command=run_again_callback, font=large_font).pack(pady=20)
     tk.Button(root, text="Exit", command=lambda: exit_callback(root), font=large_font).pack(pady=20)
