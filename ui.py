@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import messagebox, ttk
 from utils import validate_date
 from xpaths import YEAR
+from datetime import datetime, timedelta
 
 # List of European airport codes with corresponding cities
 from xpaths import AIRPORT_CODES
@@ -78,17 +79,18 @@ def get_user_input():
         return None
     to_airport = to_airport.upper()
 
-    departure_month_day = custom_input_dialog(
-        "Input", "Enter departure month and day (MM-DD or MM.DD or MM DD):"
+    start_date = custom_input_dialog(
+        "Input", "Enter the start date of the 30-day period (YYYY-MM-DD):"
     )
-    if not departure_month_day:
+    if not start_date:
         return None
 
-    return_month_day = custom_input_dialog(
-        "Input", "Enter return month and day (MM-DD or MM.DD or MM DD):"
+    holiday_duration = custom_input_dialog(
+        "Input", "Enter the holiday duration in days (1-30):"
     )
-    if not return_month_day:
+    if not holiday_duration:
         return None
+    holiday_duration = int(holiday_duration)
 
     if len(from_airport) != 3 or not from_airport.isalpha():
         messagebox.showerror(
@@ -101,45 +103,44 @@ def get_user_input():
         )
         return get_user_input()
 
-    while True:
-        if not validate_date(departure_month_day):
-            messagebox.showerror(
-                "Error", "Invalid departure date format. Please try again."
-            )
-            departure_month_day = custom_input_dialog(
-                "Input", "Enter departure month and day (MM-DD or MM.DD or MM DD):"
-            )
-            if not departure_month_day:
-                return None
-            continue
+    # Validate date format
+    try:
+        datetime.strptime(start_date, "%Y-%m-%d")
+    except ValueError:
+        messagebox.showerror(
+            "Error", "Invalid date format. Please enter the date in YYYY-MM-DD format."
+        )
+        return get_user_input()
+    try:
+        datetime.strptime(start_date, "%Y-%m-%d")
+    except ValueError:
+        messagebox.showerror(
+            "Error", "Invalid date format. Please enter the date in YYYY-MM-DD format."
+        )
+        return get_user_input()
 
-        if not validate_date(return_month_day):
-            messagebox.showerror(
-                "Error", "Invalid return date format. Please try again."
-            )
-            return_month_day = custom_input_dialog(
-                "Input", "Enter return month and day (MM-DD or MM.DD or MM DD):"
-            )
-            if not return_month_day:
-                return None
-            continue
+    return from_airport, to_airport, start_date, holiday_duration
 
-        break
 
-    departure_date = f"{YEAR}-{departure_month_day.replace('.', '-').replace(' ', '-').replace('/', '-')}"
-    return_date = f"{YEAR}-{return_month_day.replace('.', '-').replace(' ', '-').replace('/', '-')}"
-
-    return from_airport, to_airport, departure_date, return_date
+def generate_date_ranges(start_date, holiday_duration):
+    start_date = datetime.strptime(start_date, "%Y-%m-%d")
+    date_ranges = []
+    for i in range(30 - holiday_duration + 1):
+        departure_date = start_date + timedelta(days=i)
+        return_date = departure_date + timedelta(days=holiday_duration)
+        date_ranges.append((departure_date.strftime("%Y-%m-%d"), return_date.strftime("%Y-%m-%d")))
+    print(f"Date ranges:{date_ranges}")
+    return date_ranges
 
 
 def display_results(
     from_airport,
     to_airport,
-    departure_date,
-    return_date,
-    price,
-    departure_hour,
-    return_hour,
+    departure_dates,
+    return_dates,
+    prices,
+    departure_hours,
+    return_hours,
     run_again_callback,
     exit_callback,
 ):
@@ -162,23 +163,17 @@ def display_results(
         text=f"To: {to_airport} ({AIRPORT_CODES.get(to_airport, 'Unknown')})",
         font=large_font,
     ).pack(pady=20)
-    tk.Label(root, text=f"Departure Date: {departure_date}", font=large_font).pack(
-        pady=20
-    )
-    tk.Label(root, text=f"Return Date: {return_date}", font=large_font).pack(pady=20)
-    tk.Label(root, text=f"Price: {price} RON", font=large_font).pack(pady=20)
-    tk.Label(root, text=f"Departure Hour: {departure_hour}", font=large_font).pack(
-        pady=20
-    )
-    tk.Label(root, text=f"Return Hour: {return_hour}", font=large_font).pack(pady=20)
-    tk.Button(root, text="Run Again", command=run_again_callback, font=large_font).pack(
-        pady=20
-    )
-    tk.Button(
-        root, text="Exit", command=lambda: exit_callback(root), font=large_font
-    ).pack(pady=20)
-    root.mainloop()
 
+    for departure_date, departure_hour, return_date, return_hour, price in zip(departure_dates, departure_hours, return_dates, return_hours, prices):
+        tk.Label(root, text=f"Departure Date: {departure_date}", font=large_font).pack(pady=10)
+        tk.Label(root, text=f"Departure Hour: {departure_hour}", font=large_font).pack(pady=10)
+        tk.Label(root, text=f"Return Date: {return_date}", font=large_font).pack(pady=10)
+        tk.Label(root, text=f"Return Hour: {return_hour}", font=large_font).pack(pady=10)
+        tk.Label(root, text=f"Price: {price} EUR", font=large_font).pack(pady=10)
+
+    tk.Button(root, text="Run Again", command=run_again_callback, font=large_font).pack(pady=20)
+    tk.Button(root, text="Exit", command=lambda: exit_callback(root), font=large_font).pack(pady=20)
+    root.mainloop()
 
 def exit_callback(root):
     root.quit()

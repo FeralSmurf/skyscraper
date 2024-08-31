@@ -32,4 +32,5 @@ AIRPORT_CODES = {
     "VIE": "Vienna, Austria",
     "WAW": "Warsaw, Poland",
     "ZRH": "Zurich, Switzerland",
+    "RBA": "Rabat, Marocco"
 }

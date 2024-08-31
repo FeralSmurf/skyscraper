@@ -1,24 +1,22 @@
-# logic.py
-import tkinter as tk
 from selenium import webdriver
-from selenium.webdriver.firefox.service import Service as FirefoxService
-from webdriver_manager.firefox import GeckoDriverManager
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
-from datetime import datetime
 import time
+import re
 
 # Importing from other files
 from db import create_db, insert_data
-from xpaths import ALLOW_COOKIES_XPATH, YEAR
+from xpaths import ALLOW_COOKIES_XPATH
 from ui import get_user_input, display_results
+from ui import generate_date_ranges
 
-driver = webdriver.Firefox(service=FirefoxService(GeckoDriverManager().install()))
+# Initialize Chrome Webdriver
+driver = webdriver.Chrome()
 driver.get("https://vola.ro/")
-wait = WebDriverWait(driver, 3)  # Define the wait variable
+wait = WebDriverWait(driver, 3)
 
-
+# Navigation
 def allow_cookies(driver):
     try:
         allow_cookies_element = wait.until(
@@ -28,8 +26,13 @@ def allow_cookies(driver):
         print("🙂 Button clicked, cookies allowed 🍪.")
         return True
     except Exception as e:
-        print(f"No button found. Details: {e}")
+        print(f"No button found. Probably cookies have already been accepted/")
         return False
+
+def clear_cache(driver):
+    driver.execute_cdp_cmd('Network.clearBrowserCache', {})
+    driver.execute_cdp_cmd('Network.clearBrowserCookies', {})
+    print("🧹 Cache and cookies cleared.")
 
 
 def navigate(driver, from_airport, to_airport, departure_date, return_date):
@@ -41,7 +44,6 @@ def navigate(driver, from_airport, to_airport, departure_date, return_date):
     )
     driver.get(url_to_manipulate)
 
-
 def get_flight_data(driver):
     # get the price
     price_xpath = "/html/body/div[1]/div[3]/div/div/div[2]/ith-tab-filters/div/ith-tab-filter[1]/div/strong[1]/span"
@@ -50,7 +52,8 @@ def get_flight_data(driver):
     )
     time.sleep(10)  # make sure the best price is loaded
     price = price_element.text
-    print(f"Price: {price} RON 💸")
+    price = re.sub(r'[^\d.]', '', price)  # Remove non-numeric characters
+    print(f"Price: {price} EUR 💸")
 
     # get the departure hour
     departure_xpath = "/html/body/div[1]/div[3]/div/div/div[2]/ith-flight-offers/div/div[1]/div/div/ith-flight-offer/div/div/div[1]/ith-flight-stage[1]/div/div[2]/div/div[1]/div[1]/div[1]/span"
@@ -70,41 +73,57 @@ def get_flight_data(driver):
 
     return price, departure_hour, return_hour
 
-
 def exit_callback(root):
     print("👋 Goodbye! 👋")
+    clear_cache(driver)
     driver.quit()
     root.quit()
     root.destroy()
     exit()  # Ensure the entire program stops
 
-
 def run_logic():
     allow_cookies(driver)
     user_input = get_user_input()
     if user_input:
-        from_airport, to_airport, departure_date, return_date = user_input
-        navigate(driver, from_airport, to_airport, departure_date, return_date)
-        price, departure_hour, return_hour = get_flight_data(driver)
-        print("🚀 Program finished, please check your browser.")
-        create_db()
-        insert_data(
-            from_airport,
-            to_airport,
-            departure_date,
-            return_date,
-            price,
-            departure_hour,
-            return_hour,
-        )
-        display_results(
-            from_airport,
-            to_airport,
-            departure_date,
-            return_date,
-            price,
-            departure_hour,
-            return_hour,
-            run_again_callback=run_logic,
-            exit_callback=exit_callback,
-        )
+        from_airport, to_airport, start_date, holiday_duration = user_input
+        date_ranges = generate_date_ranges(start_date, holiday_duration)
+        
+        best_price = float('inf')
+        best_period = None
+        best_departure_hour = None
+        best_return_hour = None
+
+        for departure_date, return_date in date_ranges:
+            navigate(driver, from_airport, to_airport, departure_date, return_date)
+            price, departure_hour, return_hour = get_flight_data(driver)
+            price = float(price.replace(',', ''))  # Convert price to float for comparison
+            if price < best_price:
+                best_price = price
+                best_period = (departure_date, return_date)
+                best_departure_hour = departure_hour
+                best_return_hour = return_hour
+
+        if best_period:
+            departure_date, return_date = best_period
+            print("🚀 Program finished, please check your browser.")
+            create_db()
+            insert_data(
+                from_airport,
+                to_airport,
+                departure_date,
+                return_date,
+                best_price,
+                best_departure_hour,
+                best_return_hour,
+            )
+            display_results(
+                from_airport,
+                to_airport,
+                departure_date,
+                return_date,
+                best_price,
+                best_departure_hour,
+                best_return_hour,
+                run_again_callback=run_logic,
+                exit_callback=exit_callback,
+            )
