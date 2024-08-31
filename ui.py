@@ -129,10 +129,6 @@ def generate_date_ranges(start_date, holiday_duration):
         departure_date = start_date + timedelta(days=i)
         return_date = departure_date + timedelta(days=holiday_duration)
         date_ranges.append((departure_date.strftime("%Y-%m-%d"), return_date.strftime("%Y-%m-%d")))
-    print("Date ranges:")
-    for index, date_range in enumerate(date_ranges, start=1):
-        print(f"{index}. {date_range}")
-    print()  # Add an extra newline for better readability
     return date_ranges
 
 

@@ -23,7 +23,7 @@ def allow_cookies(driver):
             EC.element_to_be_clickable((By.XPATH, ALLOW_COOKIES_XPATH))
         )
         allow_cookies_element.click()
-        print("🙂 Button clicked, cookies allowed 🍪.")
+        print("🙂 Button clicked, cookies allowed 🍪.\n")
         return True
     except Exception as e:
         print(f"No button found. Probably cookies have already been accepted/")
@@ -53,7 +53,6 @@ def get_flight_data(driver):
     time.sleep(10)  # make sure the best price is loaded
     price = price_element.text
     price = re.sub(r'[^\d.]', '', price)  # Remove non-numeric characters
-    print(f"Price: {price} EUR 💸\n")
 
     # get the departure hour
     departure_xpath = "/html/body/div[1]/div[3]/div/div/div[2]/ith-flight-offers/div/div[1]/div/div/ith-flight-offer/div/div/div[1]/ith-flight-stage[1]/div/div[2]/div/div[1]/div[1]/div[1]/span"
@@ -61,7 +60,6 @@ def get_flight_data(driver):
         EC.presence_of_element_located((By.XPATH, departure_xpath))
     )
     departure_hour = departure_element.text
-    print(f"Departure hour: {departure_hour}")
 
     # get the return hour
     return_hour_xpath = "/html/body/div[1]/div[3]/div/div/div[2]/ith-flight-offers/div/div[1]/div/div/ith-flight-offer/div/div/div[1]/ith-flight-stage[2]/div/div[2]/div/div[1]/div[1]/div[1]/span"
@@ -69,7 +67,6 @@ def get_flight_data(driver):
         EC.presence_of_element_located((By.XPATH, return_hour_xpath))
     )
     return_hour = return_hour_element.text
-    print(f"Return hour: {return_hour}")
 
     return price, departure_hour, return_hour
 
@@ -93,10 +90,17 @@ def run_logic():
         best_departure_hour = None
         best_return_hour = None
 
-        for departure_date, return_date in date_ranges:
+        print("Generated time slots and associated data:\n")
+
+        for index, (departure_date, return_date) in enumerate(date_ranges, start=1):
             navigate(driver, from_airport, to_airport, departure_date, return_date)
             price, departure_hour, return_hour = get_flight_data(driver)
             price = float(price.replace(',', ''))  # Convert price to float for comparison
+
+            print(f"{index}. ({departure_date}, {return_date})")
+            print(f"   Price: {price} EUR 💸")
+            print(f"   Departure hour: {departure_hour}")
+            print(f"   Return hour: {return_hour}\n")
 
             if price < best_price:
                 best_price = price
