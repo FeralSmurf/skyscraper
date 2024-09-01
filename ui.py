@@ -159,13 +159,12 @@ def display_results(
         root,
         text=f"From: {from_airport} ({AIRPORT_CODES.get(from_airport, 'Unknown')})",
         font=large_font,
-    ).pack(pady=20)
+    ).pack(pady=10)
     tk.Label(
         root,
         text=f"To: {to_airport} ({AIRPORT_CODES.get(to_airport, 'Unknown')})",
         font=large_font,
     ).pack(pady=20)
-
     tk.Label(root, text=f"Departure Date: {departure_date}", font=large_font).pack(pady=10)
     tk.Label(root, text=f"Departure Hour: {departure_hour}", font=large_font).pack(pady=10)
     tk.Label(root, text=f"Return Date: {return_date}", font=large_font).pack(pady=10)
@@ -173,7 +172,7 @@ def display_results(
     tk.Label(root, text=f"Price: {price} EUR", font=large_font).pack(pady=10)
 
     # Display the URL from which the data was fetched
-    url_label = tk.Label(root, text=f"Make your purchase here\n: {best_result_url}", font=large_font, fg="blue", cursor="hand2")
+    url_label = tk.Label(root, text=f"Make your purchase here:\n {best_result_url}", font=large_font, fg="blue", cursor="hand2")
     url_label.pack(pady=10)
 
     def open_url(event):
