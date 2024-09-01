@@ -89,6 +89,7 @@ def run_logic():
         best_period = None
         best_departure_hour = None
         best_return_hour = None
+        best_url = None  # Variable to store the URL of the best price
 
         print("Generated time slots and associated data:\n")
 
@@ -107,6 +108,7 @@ def run_logic():
                 best_period = (departure_date, return_date)
                 best_departure_hour = departure_hour
                 best_return_hour = return_hour
+                best_url = driver.current_url  # Store the current (best) URL
 
         if best_period:
             departure_date, return_date = best_period
@@ -129,6 +131,7 @@ def run_logic():
                 best_price,
                 best_departure_hour,
                 best_return_hour,
+                best_url,  # Pass the best URL to display_results
                 run_again_callback=run_logic,
                 exit_callback=exit_callback,
             )

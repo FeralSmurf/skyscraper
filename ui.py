@@ -84,6 +84,8 @@ def get_user_input():
     )
     if not start_date:
         return None
+    
+    start_date = start_date.replace(" ", "-").replace(".", "-").replace("/", "-")
 
     holiday_duration = custom_input_dialog(
         "Input", "Enter the holiday duration in days (1-30):"
@@ -140,6 +142,7 @@ def display_results(
     price,
     departure_hour,
     return_hour,
+    best_result_url,  # Add this parameter
     run_again_callback,
     exit_callback,
 ):
@@ -169,6 +172,17 @@ def display_results(
     tk.Label(root, text=f"Return Hour: {return_hour}", font=large_font).pack(pady=10)
     tk.Label(root, text=f"Price: {price} EUR", font=large_font).pack(pady=10)
 
+    # Display the URL from which the data was fetched
+    url_label = tk.Label(root, text=f"Make your purchase here\n: {best_result_url}", font=large_font, fg="blue", cursor="hand2")
+    url_label.pack(pady=10)
+
+    def open_url(event):
+        import webbrowser
+        webbrowser.open_new(best_result_url)
+
+    # Bind the URL label to open the URL in a web browser
+    url_label.bind("<Button-1>", open_url)
+
     tk.Button(root, text="Run Again", command=run_again_callback, font=large_font).pack(pady=20)
     tk.Button(root, text="Exit", command=lambda: exit_callback(root), font=large_font).pack(pady=20)
     root.mainloop()
@@ -176,4 +190,4 @@ def display_results(
 def exit_callback(root):
     root.quit()
     root.destroy()
-    exit()  # Ensure the entire program stops
+    exit() 
