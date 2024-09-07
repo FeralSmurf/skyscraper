@@ -82,6 +82,13 @@ def get_user_input():
     start_date = custom_input_dialog(
         "Input", "Enter the start date of the 30-day period (YYYY-MM-DD):"
     )
+
+    if not validate_date(start_date):
+        messagebox.showerror(
+            "Error", "Invalid date format. The correct format is: YYYY-MM-DD format. Please try again.", 
+        )
+        return get_user_input()
+
     if not start_date:
         return None
     

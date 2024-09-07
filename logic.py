@@ -25,8 +25,8 @@ def allow_cookies(driver):
         allow_cookies_element.click()
         print("🙂 Button clicked, cookies allowed 🍪.\n")
         return True
-    except Exception as e:
-        print(f"No button found. Probably cookies have already been accepted/")
+    except Exception:
+        print("No button found. Probably cookies have already been accepted.")
         return False
 
 def clear_cache(driver):
