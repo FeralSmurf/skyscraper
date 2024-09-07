@@ -85,7 +85,7 @@ def get_user_input():
 
     if not validate_date(start_date):
         messagebox.showerror(
-            "Error", "Invalid date format. The correct format is: YYYY-MM-DD format. Please try again.", 
+            "Error", "Invalid date format. The correct format is: YYYY-MM-DD. Please try again.", 
         )
         return get_user_input()
 
