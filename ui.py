@@ -79,7 +79,7 @@ def get_user_input():
     to_airport = to_airport.upper()
 
     start_date = custom_input_dialog(
-        "Input", "Enter the start date of the 30-day period (YYYY-MM-DD):"
+        "Input", "Enter the start date of the timeframe to be searched (YYYY-MM-DD):"
     )
 
     if not validate_date(start_date):
@@ -92,6 +92,13 @@ def get_user_input():
         return None
     
     start_date = start_date.replace(" ", "-").replace(".", "-").replace("/", "-")
+
+    search_duration = custom_input_dialog(
+        "Input", "How many days should I search for?"
+    )
+    if not search_duration:
+        return None
+    search_duration = int(search_duration)
 
     holiday_duration = custom_input_dialog(
         "Input", "Enter the holiday duration in days (1-30):"
@@ -119,21 +126,14 @@ def get_user_input():
             "Error", "Invalid date format. Please enter the date in YYYY-MM-DD format."
         )
         return get_user_input()
-    try:
-        datetime.strptime(start_date, "%Y-%m-%d")
-    except ValueError:
-        messagebox.showerror(
-            "Error", "Invalid date format. Please enter the date in YYYY-MM-DD format."
-        )
-        return get_user_input()
 
-    return from_airport, to_airport, start_date, holiday_duration
+    return from_airport, to_airport, start_date, holiday_duration, search_duration
 
 
-def generate_date_ranges(start_date, holiday_duration):
+def generate_date_ranges(start_date, holiday_duration, search_duration):
     start_date = datetime.strptime(start_date, "%Y-%m-%d")
     date_ranges = []
-    for i in range(30 - holiday_duration + 1):
+    for i in range(search_duration - holiday_duration + 1):
         departure_date = start_date + timedelta(days=i)
         return_date = departure_date + timedelta(days=holiday_duration)
         date_ranges.append((departure_date.strftime("%Y-%m-%d"), return_date.strftime("%Y-%m-%d")))

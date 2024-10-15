@@ -82,8 +82,8 @@ def run_logic():
     allow_cookies(driver)
     user_input = get_user_input()
     if user_input:
-        from_airport, to_airport, start_date, holiday_duration = user_input
-        date_ranges = generate_date_ranges(start_date, holiday_duration)
+        from_airport, to_airport, start_date, holiday_duration, search_duration = user_input
+        date_ranges = generate_date_ranges(start_date, holiday_duration, search_duration)
         
         best_price = float('inf')
         best_period = None
