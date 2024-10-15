@@ -1,7 +1,6 @@
 import tkinter as tk
 from tkinter import messagebox, ttk
 from utils import validate_date
-from xpaths import YEAR
 from datetime import datetime, timedelta
 
 # List of European airport codes with corresponding cities

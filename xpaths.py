@@ -1,5 +1,5 @@
 ALLOW_COOKIES_XPATH = '//*[@id="CybotCookiebotDialogBodyLevelButtonLevelOptinAllowAll"]'
-YEAR = 2024
+
 
 AIRPORT_CODES = {
     "AMS": "Amsterdam, Netherlands",
@@ -17,8 +17,7 @@ AIRPORT_CODES = {
     "GVA": "Geneva, Switzerland",
     "HEL": "Helsinki, Finland",
     "IST": "Istanbul, Turkey",
-    "LGW": "London, United Kingdom",
-    "LHR": "London, United Kingdom",
+    "LON": "London, United Kingdom",
     "LIS": "Lisbon, Portugal",
     "LYS": "Lyon, France",
     "MAD": "Madrid, Spain",
