@@ -84,18 +84,17 @@ def get_user_input():
 
     if not validate_date(start_date):
         messagebox.showerror(
-            "Error", "Invalid date format. The correct format is: YYYY-MM-DD. Please try again.", 
+            "Error",
+            "Invalid date format. Also, make sure the date is in the future. Correct format: YYYY-MM-DD. Please try again, slower.",
         )
         return get_user_input()
 
     if not start_date:
         return None
-    
+
     start_date = start_date.replace(" ", "-").replace(".", "-").replace("/", "-")
 
-    search_duration = custom_input_dialog(
-        "Input", "How many days should I search for?"
-    )
+    search_duration = custom_input_dialog("Input", "How many days should I search for?")
     if not search_duration:
         return None
     search_duration = int(search_duration)
@@ -136,7 +135,9 @@ def generate_date_ranges(start_date, holiday_duration, search_duration):
     for i in range(search_duration - holiday_duration + 1):
         departure_date = start_date + timedelta(days=i)
         return_date = departure_date + timedelta(days=holiday_duration)
-        date_ranges.append((departure_date.strftime("%Y-%m-%d"), return_date.strftime("%Y-%m-%d")))
+        date_ranges.append(
+            (departure_date.strftime("%Y-%m-%d"), return_date.strftime("%Y-%m-%d"))
+        )
     return date_ranges
 
 
@@ -171,28 +172,45 @@ def display_results(
         text=f"To: {to_airport} ({AIRPORT_CODES.get(to_airport, 'Unknown')})",
         font=large_font,
     ).pack(pady=20)
-    tk.Label(root, text=f"Departure Date: {departure_date}", font=large_font).pack(pady=10)
-    tk.Label(root, text=f"Departure Hour: {departure_hour}", font=large_font).pack(pady=10)
+    tk.Label(root, text=f"Departure Date: {departure_date}", font=large_font).pack(
+        pady=10
+    )
+    tk.Label(root, text=f"Departure Hour: {departure_hour}", font=large_font).pack(
+        pady=10
+    )
     tk.Label(root, text=f"Return Date: {return_date}", font=large_font).pack(pady=10)
     tk.Label(root, text=f"Return Hour: {return_hour}", font=large_font).pack(pady=10)
     tk.Label(root, text=f"Price: {price} EUR", font=large_font).pack(pady=10)
 
     # Display the URL from which the data was fetched
-    url_label = tk.Label(root, text=f"Make your purchase here:\n {best_result_url}", font=large_font, fg="blue", cursor="hand2")
+    url_label = tk.Label(
+        root,
+        text=f"Make your purchase here:\n {best_result_url}",
+        font=large_font,
+        fg="blue",
+        cursor="hand2",
+    )
     url_label.pack(pady=10)
 
     def open_url(event):
         import webbrowser
+
         webbrowser.open_new(best_result_url)
 
     # Bind the URL label to open the URL in a web browser
     url_label.bind("<Button-1>", open_url)
 
-    tk.Button(root, text="Run Again", command=run_again_callback, font=large_font).pack(pady=20)
-    tk.Button(root, text="Exit", command=lambda: exit_callback(root), font=large_font).pack(pady=20)
+    tk.Button(root, text="Run Again", command=run_again_callback, font=large_font).pack(
+        pady=20
+    )
+    tk.Button(
+        root, text="Exit", command=lambda: exit_callback(root), font=large_font
+    ).pack(pady=20)
     root.mainloop()
+
 
 def exit_callback(root):
     root.quit()
     root.destroy()
-    exit() 
+    exit()
+
