@@ -1,0 +1,36 @@
+ALLOW_COOKIES_XPATH = '//*[@id="CybotCookiebotDialogBodyLevelButtonLevelOptinAllowAll"]'
+
+
+AIRPORT_CODES = {
+    "AMS": "Amsterdam, Netherlands",
+    "ATH": "Athens, Greece",
+    "BCN": "Barcelona, Spain",
+    "BRU": "Brussels, Belgium",
+    "BUD": "Budapest, Hungary",
+    "CDG": "Paris, France",
+    "CPH": "Copenhagen, Denmark",
+    "DUB": "Dublin, Ireland",
+    "DUS": "Düsseldorf, Germany",
+    "EDI": "Edinburgh, Scotland",
+    "FCO": "Rome, Italy",
+    "FRA": "Frankfurt, Germany",
+    "GVA": "Geneva, Switzerland",
+    "HEL": "Helsinki, Finland",
+    "IST": "Istanbul, Turkey",
+    "LON": "London, United Kingdom",
+    "LIS": "Lisbon, Portugal",
+    "LYS": "Lyon, France",
+    "MAD": "Madrid, Spain",
+    "MAN": "Manchester, United Kingdom",
+    "MUC": "Munich, Germany",
+    "OSL": "Oslo, Norway",
+    "OTP": "Bucharest, Romania",
+    "PSA": "Pisa, Italy",
+    "PRG": "Prague, Czech Republic",
+    "RIX": "Riga, Latvia",
+    "SVO": "Moscow, Russia",
+    "VIE": "Vienna, Austria",
+    "WAW": "Warsaw, Poland",
+    "ZRH": "Zurich, Switzerland",
+    "RBA": "Rabat, Marocco"
+}
